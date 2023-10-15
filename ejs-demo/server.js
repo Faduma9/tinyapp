@@ -1,17 +1,15 @@
-var express = require('express');
-var app = express();
-var path = require('path'); // Import the path module
+const express = require('express');
+const app = express();
+const path = require('path'); // Import the path module
+const PORT = 8080;
 
-// Set the view engine to EJS
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'views'));
 
 // Define routes
 
 // Index page
 app.get('/', function(req, res) {
-  res.render('pages/index');
-
   var mascots = [
     { name: 'Sammy', organization: "DigitalOcean", birth_year: 2012},
     { name: 'Tux', organization: "Linux", birth_year: 1996},
@@ -19,7 +17,7 @@ app.get('/', function(req, res) {
   ];
   var tagline = "No programming concept is complete without a cute animal mascot.";
 
-  res.render('pages/index', {
+  res.render('index', {
     mascots: mascots,
     tagline: tagline
   });
@@ -27,10 +25,10 @@ app.get('/', function(req, res) {
 
 // About page
 app.get('/about', function(req, res) {
-  res.render('pages/about');
+  res.render('about');
 });
 
 // Start the server
-app.listen(8080, function() {
-  console.log('Server is listening on port 8080');
+app.listen(PORT, function() {
+  console.log(`Server is listening on port ${PORT}`);
 });
