@@ -19,7 +19,11 @@ app.listen(PORT, () => {
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
   });
-
+  app.get("/urls", (req, res) => {
+    const templateVars = { urls: urlDatabase }; // Pass the urlDatabase to the template
+    res.render("urls_index", templateVars); // Render the "urls_index.ejs" template
+  });
+  
   app.get("/hello", (req, res) => {
     res.send("<html><body>Hello <b>World</b></body></html>\n");
   });
