@@ -65,6 +65,19 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
+// route to handle the DELETE operation
+app.post("/urls/:id/delete", (req, res) => {
+  const shortURL = req.params.id;
+  // Check if the shortURL exists in your database
+  if (urlDatabase[shortURL]) {
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  } else {
+    // Handle the case where the shortURL doesn't exist
+    res.status(404).send("Short URL not found.");
+  }
+});
+
 
 
 
