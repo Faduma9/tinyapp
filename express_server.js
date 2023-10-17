@@ -77,6 +77,12 @@ app.post("/urls/:id/delete", (req, res) => {
     res.status(404).send("Short URL not found.");
   }
 });
+//route to handle the edit operation
+app.post("/urls/:id/edit", (req, res) => {
+  const shortURL = req.params.id;
+  const updatedLongURL = req.body.longURL;
+  res.redirect("/urls");
+});
 
 
 
