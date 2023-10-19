@@ -15,14 +15,26 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-item nav-link" href="/urls">My URLs</a>
-          <a class "nav-item nav-link" href="/urls/new">Create New URL</a>
-        </div>
+          <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        </div id="header">
+        
+
       </div>
 <!-- login form here -->
-<form action="/login" method="POST" class="form-inline ml-auto">
-  <input type="text" class="form-control" name="username" placeholder="Enter your Username...">
-  <button type="submit" class="btn btn-primary">Login</button>
-</form>
+<% if (username === undefined) { %>
+  <!-- Display login form when user is not logged in -->
+  <form action="/login" method="POST" class="form-inline ml-auto">
+    <input type="text" class="form-control" name="username" placeholder="Enter your Username...">
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+<% } else { %>
+  <!-- Display the logged-in user information and the logout button when the user is logged in -->
+  <div id="header">
+    Logged in as: TinyApp <%= username %>
+    <!-- Other header elements -->
+    <a href="/logout">Logout</a>
+  </div>
+<% } %>
 
     </nav>
   </header>

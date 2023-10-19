@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
+const PORT = 8080; // default port 8080
 
 //generateRandomString function goes here
 function generateRandomString(length) {
@@ -14,6 +16,22 @@ function generateRandomString(length) {
   return result;
 }
 
+app.get("/urls", (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase,
+  
+    // ... can add other variables want to pass
+  };
+  res.render("urls_index", templateVars);
+});
+app.get("/urls/new", (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"], // Pass the 'username' to the template
+    // ... can add other variables want to pass
+  };
+  res.render("urls_new", templateVars);
+});
 
 app.use(express.urlencoded({ extended: true }));
 
