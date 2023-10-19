@@ -1,11 +1,19 @@
+// Import necessary modules
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
-const PORT = 8080; // default port 8080
+// Define the port number
+const PORT = 8080;
 
-//generateRandomString function goes here
+// Sample database for storing URLs
+const urlDatabase = {
+  "b2xVn2": "http://www.lighthouselabs.ca",
+  "9sm5xK": "http://www.google.com"
+};
+
+// Function to generate a random string for short URLs
 function generateRandomString(length) {
   const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let result = '';
@@ -16,99 +24,102 @@ function generateRandomString(length) {
   return result;
 }
 
-app.get("/urls", (req, res) => {
-  const templateVars = {
-    username: req.cookies["username"],
-    urls: urlDatabase,
-  
-    // ... can add other variables want to pass
-  };
-  res.render("urls_index", templateVars);
-});
-app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    username: req.cookies["username"], // Pass the 'username' to the template
-    // ... can add other variables want to pass
-  };
-  res.render("urls_new", templateVars);
-});
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
 
+// Parse URL-encoded request bodies with extended mode
 app.use(express.urlencoded({ extended: true }));
 
-// POST route to handle form submission
-app.post("/urls", (req, res) => {
-  const longURL = req.body.longURL;
-  const shortURL = generateRandomString(6);
-  urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls/${shortURL}`);
-});
-
-app.set('view engine', 'ejs'); // This line sets EJS as view engine
-
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
-
+// Define the root route
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
+// Define the "/urls" route for displaying a list of URLs
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase }; // Pass the urlDatabase to the template
-  res.render("urls_index", templateVars); // Render the "urls_index.ejs" template
+  const templateVars = {
+    username: req.cookies["username"], // Retrieve the username from cookies
+    urls: urlDatabase, // Pass the URL database
+  };
+  res.render("urls_index", templateVars); // Render the "urls_index" template
 });
 
+// Define the "/urls/new" route for creating a new URL
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    username: req.cookies["username"], // Retrieve the username from cookies
+  };
+  res.render("urls_new", templateVars); // Render the "urls_new" template
 });
 
+// Define the POST route for submitting a new URL
+app.post("/urls", (req, res) => {
+  const longURL = req.body.longURL;
+  const shortURL = generateRandomString(6); // Generate a short URL
+  urlDatabase[shortURL] = longURL; // Add the URL to the database
+  res.redirect(`/urls/${shortURL}`); // Redirect to the newly created URL
+});
+
+// Define the "/logout" route for logging out and clearing the "username" cookie
+app.post("/logout", (req, res) => {
+  res.clearCookie("username"); // Clear the "username" cookie
+  res.redirect("/urls"); // Redirect to the "/urls" page
+});
+
+// Define the "/urls.json" route for returning the URL database in JSON format
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase); // Respond with the URL database in JSON format
+});
+
+// Define the "/urls/:id" route for showing details of a specific URL
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
-  res.render("urls_show", templateVars);
+  const templateVars = {
+    username: req.cookies["username"], // Retrieve the username from cookies
+    id: req.params.id, // Retrieve the URL's ID
+    longURL: urlDatabase[req.params.id], // Retrieve the URL from the database
+  };
+  res.render("urls_show", templateVars); // Render the "urls_show" template
 });
 
-// Route to handle short URL redirects
+// Define the "/u/:id" route for redirecting to the long URL
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL];
-  res.redirect(longURL);
+  res.redirect(longURL); // Redirect to the long URL
 });
 
-// route to handle the DELETE operation
+// Define the POST route for deleting a URL
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
-  // Check if the shortURL exists in your database
   if (urlDatabase[shortURL]) {
-    delete urlDatabase[shortURL];
-    res.redirect("/urls");
+    delete urlDatabase[shortURL]; // Delete the URL from the database
+    res.redirect("/urls"); // Redirect to the "/urls" page
   } else {
-    // Handle the case where the shortURL doesn't exist
     res.status(404).send("Short URL not found.");
   }
 });
-//route to handle the edit operation
+
+// Define the POST route for editing a URL
 app.post("/urls/:id/edit", (req, res) => {
   const shortURL = req.params.id;
   const updatedLongURL = req.body.longURL;
-  res.redirect("/urls");
+  urlDatabase[shortURL] = updatedLongURL; // Update the URL in the database
+  res.redirect("/urls"); // Redirect to the "/urls" page
 });
 
+// Define the POST route for handling user login
 app.post('/login', (req, res) => {
   const { username } = req.body;
-  res.cookie('username', username);
-  res.redirect('/urls');
+  res.cookie('username', username); // Set the "username" cookie
+  res.redirect('/urls'); // Redirect to the "/urls" page
 });
 
-
+// Define a test route for displaying a greeting
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+// Start the server and listen on the specified port
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });

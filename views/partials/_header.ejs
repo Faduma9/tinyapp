@@ -22,19 +22,22 @@
       </div>
 <!-- login form here -->
 <% if (username === undefined) { %>
-  <!-- Display login form when user is not logged in -->
+  <!-- Display login form when the user is not logged in -->
   <form action="/login" method="POST" class="form-inline ml-auto">
     <input type="text" class="form-control" name="username" placeholder="Enter your Username...">
     <button type="submit" class="btn btn-primary">Login</button>
   </form>
 <% } else { %>
-  <!-- Display the logged-in user information and the logout button when the user is logged in -->
+  <!-- Display the logged-in user information and the logout button -->
   <div id="header">
-    Logged in as: TinyApp <%= username %>
+    Logged in as: <%= username %>
     <!-- Other header elements -->
-    <a href="/logout">Logout</a>
+    <form action="/logout" method="POST" class="form-inline ml-auto">
+      <button type="submit" class="btn btn-primary">Logout</button>
+    </form>
   </div>
 <% } %>
+</div>
 
     </nav>
   </header>
