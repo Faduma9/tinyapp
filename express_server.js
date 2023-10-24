@@ -4,6 +4,11 @@ const app = express();
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
+
+
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
+
 // Define the port number
 const PORT = 8080;
 
@@ -24,8 +29,9 @@ function generateRandomString(length) {
   return result;
 }
 
-// Set the view engine to EJS
-app.set('view engine', 'ejs');
+// Define your `users` object to store registered users
+const users = {};
+
 
 // Parse URL-encoded request bodies with extended mode
 app.use(express.urlencoded({ extended: true }));
@@ -119,13 +125,47 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-// Start the server and listen on the specified port
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
 
 // Define the GET route for '/register'
 app.get('/register', (req, res) => {
   // Render the registration template
   res.sendFile(__dirname + '/registration.html');
+});
+
+app.post("/register", (req, res) => {
+  const userId = generateRandomString(6);
+  const { email, password } = req.body;
+
+  // Check if the email is already registered
+  for (const existingUserId in users) {
+    if (users[existingUserId].email === email) {
+      res.status(400).send('Email is already registered.');
+      return;
+    }
+  }
+    
+
+  // Create a new user object and add it to the users object
+  users[userId] = { id: userId, email, password };
+
+  // Set the user_id cookie
+  res.cookie("user_id", userId);
+
+  // Redirect to the /urls page
+  res.redirect("/urls");
+});
+
+app.get("/urls", (req, res) => {
+  const templateVars = {
+    user: users[req.cookies.user_id],
+    urls: urlDatabase,
+  };
+  res.render("urls_index", templateVars);
+});
+
+
+
+// Start the server and listen on the specified port
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });

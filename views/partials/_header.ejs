@@ -1,44 +1,31 @@
 <header>
-    <nav class="navbar navbar-expand-md navbar-dark bg-success">
-      <a class="navbar-brand" href="/urls">TinyApp</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNavAltMarkup"
-        aria-controls="navbarNavAltMarkup"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-item nav-link" href="/urls">My URLs</a>
-          <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        </div id="header">
-        
-
+  <nav class="navbar navbar-expand-md navbar-dark bg-success">
+    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/urls">My URLs</a>
+        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
-<!-- login form here -->
-<% if (username === undefined) { %>
-  <!-- Display login form when the user is not logged in -->
-  <form action="/login" method="POST" class="form-inline ml-auto">
-    <input type="text" class="form-control" name="username" placeholder="Enter your Username...">
-    <button type="submit" class="btn btn-primary">Login</button>
-  </form>
-<% } else { %>
-  <!-- Display the logged-in user information and the logout button -->
-  <div id="header">
-    Logged in as: <%= username %>
-    <!-- Other header elements -->
-    <form action="/logout" method="POST" class="form-inline ml-auto">
-      <button type="submit" class="btn btn-primary">Logout</button>
-    </form>
-  </div>
-<% } %>
-</div>
+    </div>
 
-    </nav>
-  </header>
-  
+    <div class="ml-auto">
+      <!-- Display login form when the user is not logged in -->
+      <% if (username === undefined) { %>
+        <form action="/login" method="POST" class="form-inline">
+          <input type="text" class="form-control" name="username" placeholder="Enter your Username...">
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+      <% } else { %>
+        <!-- Display the logged-in user information and the logout button -->
+        Logged in as: <%= username %>
+        <form action="/logout" method="POST" class="form-inline">
+          <button type="submit" class="btn btn-primary">Logout</button>
+        </form>
+      <% } %>
+    </div>
+  </nav>
+</header>
