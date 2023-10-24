@@ -163,6 +163,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+//Create a GET Route for /login:
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
 
 
 // Start the server and listen on the specified port

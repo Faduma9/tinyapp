@@ -11,21 +11,18 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-
     <div class="ml-auto">
-      <!-- Display login form when the user is not logged in -->
-      <% if (username === undefined) { %>
-        <form action="/login" method="POST" class="form-inline">
-          <input type="text" class="form-control" name="username" placeholder="Enter your Username...">
-          <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-      <% } else { %>
-        <!-- Display the logged-in user information and the logout button -->
-        Logged in as: <%= username %>
-        <form action="/logout" method="POST" class="form-inline">
-          <button type="submit" class="btn btn-primary">Logout</button>
-        </form>
-      <% } %>
-    </div>
-  </nav>
-</header>
+<!-- Display login form when the user is not logged in -->
+<% if (username === undefined) { %>
+  <ul>
+    <li><a href="/register">Register</a></li>
+    <li><a href="/login">Login</a></li>
+  </ul>
+<% } else { %>
+  <!-- Display the logged-in user information and the logout button -->
+  Logged in as: <%= username %>
+  <form action="/logout" method="POST" class="form-inline">
+    <button type="submit" class="btn btn-primary">Logout</button>
+  </form>
+<% } %>
+
