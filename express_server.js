@@ -123,3 +123,9 @@ app.get("/hello", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+// Define the GET route for '/register'
+app.get('/register', (req, res) => {
+  // Render the registration template
+  res.sendFile(__dirname + '/registration.html');
+});
