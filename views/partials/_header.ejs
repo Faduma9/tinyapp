@@ -12,17 +12,19 @@
       </div>
     </div>
     <div class="ml-auto">
-<!-- Display login form when the user is not logged in -->
-<% if (username === undefined) { %>
-  <ul>
-    <li><a href="/register">Register</a></li>
-    <li><a href="/login">Login</a></li>
-  </ul>
-<% } else { %>
-  <!-- Display the logged-in user information and the logout button -->
-  Logged in as: <%= username %>
-  <form action="/logout" method="POST" class="form-inline">
-    <button type="submit" class="btn btn-primary">Logout</button>
-  </form>
-<% } %>
-
+      <!-- Display login form when the user is not logged in -->
+      <% if (username===undefined) { %>
+        <ul>
+          <li><a href="/register">Register</a></li>
+          <li><a href="/login">Login</a></li>
+        </ul>
+        <% } else { %>
+          <!-- Display the logged-in user information and the logout button -->
+          Logged in as: <%= username %>
+            <form action="/logout" method="POST" class="form-inline">
+              <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+            <% } %>
+    </div>
+  </nav>
+</header>
