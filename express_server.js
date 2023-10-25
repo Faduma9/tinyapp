@@ -2,10 +2,8 @@
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
 app.use(cookieParser());
-
-
-
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
 
@@ -17,6 +15,8 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+// Define your `users` object to store registered users
+const users = {};
 
 // Function to generate a random string for short URLs
 function generateRandomString(length) {
@@ -28,9 +28,17 @@ function generateRandomString(length) {
   }
   return result;
 }
-
-// Define your `users` object to store registered users
-const users = {};
+//define finduser
+function findUserByEmail (email){
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+  
+    }
+  }
+  return null;
+}
 
 
 // Parse URL-encoded request bodies with extended mode
@@ -44,7 +52,7 @@ app.get("/", (req, res) => {
 // Define the "/urls" route for displaying a list of URLs
 app.get("/urls", (req, res) => {
   const templateVars = {
-    username: req.cookies["username"], // Retrieve the username from cookies
+    user: users[req.cookies.user_id], // Retrieve the user from cookies
     urls: urlDatabase, // Pass the URL database
   };
   res.render("urls_index", templateVars); // Render the "urls_index" template
@@ -53,7 +61,7 @@ app.get("/urls", (req, res) => {
 // Define the "/urls/new" route for creating a new URL
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    username: req.cookies["username"], // Retrieve the username from cookies
+    user: users[req.cookies.user_id], // Retrieve the user from cookies
   };
   res.render("urls_new", templateVars); // Render the "urls_new" template
 });
@@ -66,10 +74,10 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`); // Redirect to the newly created URL
 });
 
-// Define the "/logout" route for logging out and clearing the "username" cookie
+// Define the "/logout" route for logging out and clearing the "user_id" cookie
 app.post("/logout", (req, res) => {
-  res.clearCookie("username"); // Clear the "username" cookie
-  res.redirect("/urls"); // Redirect to the "/urls" page
+  res.clearCookie("user_id"); // Clear the "user_id" cookie
+  res.redirect("/login"); // Redirect to the "/login" page
 });
 
 // Define the "/urls.json" route for returning the URL database in JSON format
@@ -80,7 +88,7 @@ app.get("/urls.json", (req, res) => {
 // Define the "/urls/:id" route for showing details of a specific URL
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
-    username: req.cookies["username"], // Retrieve the username from cookies
+    user: users[req.cookies.user_id], // Retrieve the user from cookies
     id: req.params.id, // Retrieve the URL's ID
     longURL: urlDatabase[req.params.id], // Retrieve the URL from the database
   };
@@ -115,10 +123,20 @@ app.post("/urls/:id/edit", (req, res) => {
 
 // Define the POST route for handling user login
 app.post('/login', (req, res) => {
-  const { username } = req.body;
-  res.cookie('username', username); // Set the "username" cookie
-  res.redirect('/urls'); // Redirect to the "/urls" page
-});
+  const { email, password } = req.body;
+  
+   // Look up the user by email in the users object
+   const user = findUserByEmail(email);
+
+       if (!user) {
+        return res.status(403).send("Email or user not found.");
+       }
+       if (bcrypt.compareSync(password, user.password)) {
+         res.cookie("user_id", user.id);
+         return res.redirect("/urls");
+       }
+   res.status(403).send("Email or password is incorrect.");
+ });
 
 // Define a test route for displaying a greeting
 app.get("/hello", (req, res) => {
@@ -126,49 +144,37 @@ app.get("/hello", (req, res) => {
 });
 
 
-// Define the GET route for '/register'
-app.get('/register', (req, res) => {
-  // Render the registration template
-  res.sendFile(__dirname + '/registration.html');
-});
-
 app.post("/register", (req, res) => {
   const userId = generateRandomString(6);
   const { email, password } = req.body;
 
-  // Check if the email is already registered
   for (const existingUserId in users) {
     if (users[existingUserId].email === email) {
       res.status(400).send('Email is already registered.');
       return;
     }
   }
-    
 
-  // Create a new user object and add it to the users object
-  users[userId] = { id: userId, email, password };
-
-  // Set the user_id cookie
+  users[userId] = { id: userId, email, password:bcrypt.hashSync(password, 10)};
   res.cookie("user_id", userId);
-
-  // Redirect to the /urls page
   res.redirect("/urls");
 });
 
-app.get("/urls", (req, res) => {
+// Create a GET Route for /login
+app.get("/login", (req, res) => {
+  const templateVars = {
+    user: users[req.cookies.user_id], // Retrieve the user from cookies
+  };
+  res.render("login", templateVars);
+});
+
+// Create a GET Route for /register
+app.get('/register', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id],
-    urls: urlDatabase,
   };
-  res.render("urls_index", templateVars);
+  res.render('registration', templateVars);
 });
-
-//Create a GET Route for /login:
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-
 
 // Start the server and listen on the specified port
 app.listen(PORT, () => {

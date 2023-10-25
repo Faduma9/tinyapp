@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!-- Bootstrap CSS -->
+  <link
+  rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+  crossorigin="anonymous"
+/>
   <title>Login</title>
 </head>
 <body>
+    <%- include('partials/_header') %>
   <h1>Login</h1>
   <form method="POST" action="/login">
     <label for="email">Email:</label>
@@ -12,7 +20,9 @@
     <label for="password">Password:</label>
     <input type="password" name="password" id="password" required><br>
 
-    <button type="submit">Login</button>
+    <button type="submit" class="btn btn-primary">Login</button>
   </form>
 </body>
 </html>
+
+  
