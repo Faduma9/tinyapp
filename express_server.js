@@ -1,9 +1,14 @@
 // Import necessary modules
 const express = require("express");
 const app = express();
-const cookieParser = require("cookie-parser");
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
-app.use(cookieParser());
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['your-secret-key'],
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+}));
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
 
@@ -58,7 +63,7 @@ app.get("/", (req, res) => {
 // Define the "/urls" route for displaying a list of URLs
 app.get("/urls", (req, res) => {
   const templateVars = {
-    user: users[req.cookies.user_id], // Retrieve the user from cookies
+    user: users[req.session.user_id], // Retrieve the user from cookies
     urls: urlDatabase, // Pass the URL database
   };
   res.render("urls_index", templateVars); // Render the "urls_index" template
@@ -66,7 +71,8 @@ app.get("/urls", (req, res) => {
 
 // Define the "/urls/new" route for creating a new URL
 app.get("/urls/new", (req, res) => {
-  const user = users[req.cookies.user_id]; // Retrieve the user from cookies
+  const user = users[req.session
+    .user_id]; // Retrieve the user from cookies
 
   if (user) {
     const templateVars = {
@@ -81,7 +87,7 @@ app.get("/urls/new", (req, res) => {
 
 // Define the POST route for submitting a new URL
 app.post("/urls", (req, res) => {
-  const user = users[req.cookies.user_id]; // Retrieve the user from cookies
+  const user = users[req.session.user_id]; // Retrieve the user from cookies
 
   if (user) {
     const longURL = req.body.longURL;
@@ -112,7 +118,7 @@ app.get("/urls.json", (req, res) => {
 // Define the "/urls/:id" route for showing details of a specific URL
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
-    user: users[req.cookies.user_id], // Retrieve the user from cookies
+    user: users[req.session.user_id], // Retrieve the user from cookies
     id: req.params.id, // Retrieve the URL's ID
     longURL: urlDatabase[req.params.id], // Retrieve the URL from the database
   };
@@ -128,7 +134,7 @@ app.get("/u/:id", (req, res) => {
 
 //delete route
 app.post("/urls/:id/delete", (req, res) => {
-  const user = users[req.cookies.user_id]; // Retrieve the user from cookies
+  const user = users[req.session.user_id]; // Retrieve the user from cookies
   const shortURL = req.params.id;
 
   if (user && urlDatabase[shortURL] && urlDatabase[shortURL].userID === user.id) {
@@ -193,7 +199,7 @@ app.post("/register", (req, res) => {
 // Create a GET Route for /login
 app.get("/login", (req, res) => {
   const templateVars = {
-    user: users[req.cookies.user_id], // Retrieve the user from cookies
+    user: users[req.session.user_id], // Retrieve the user from cookies
   };
   res.render("login", templateVars);
 });
@@ -201,7 +207,7 @@ app.get("/login", (req, res) => {
 // Create a GET Route for /register
 app.get('/register', (req, res) => {
   const templateVars = {
-    user: users[req.cookies.user_id],
+    user: users[req.session.user_id],
   };
   res.render('registration', templateVars);
 });
@@ -209,11 +215,11 @@ app.get('/register', (req, res) => {
 // Create a GET Route for /login
 app.get("/login", (req, res) => {
   // Check if the user is already logged in
-  if (req.cookies.user_id && users[req.cookies.user_id]) {
+  if (req.session.user_id && users[req.session.user_id]) {
     res.redirect("/urls"); // Redirect to /urls if logged in
   } else {
     const templateVars = {
-      user: users[req.cookies.user_id], // Retrieve the user from cookies
+      user: users[req.session.user_id], // Retrieve the user from cookies
     };
     res.render("login", templateVars);
   }
@@ -222,11 +228,11 @@ app.get("/login", (req, res) => {
 // Create a GET Route for /register
 app.get('/register', (req, res) => {
   // Check if the user is already logged in
-  if (req.cookies.user_id && users[req.cookies.user_id]) {
+  if (req.session.user_id && users[req.session.user_id]) {
     res.redirect("/urls"); // Redirect to /urls if logged in
   } else {
     const templateVars = {
-      user: users[req.cookies.user_id],
+      user: users[req.session.user_id],
     };
     res.render('registration', templateVars);
   }
@@ -258,7 +264,7 @@ function urlsForUser(id) {
 
 
 app.get("/urls", (req, res) => {
-  const user = users[req.cookies.user_id];
+  const user = users[req.session.user_id];
   if (user) {
     const userURLs = urlsForUser(user.id);
     const templateVars = {
@@ -272,7 +278,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const user = users[req.cookies.user_id];
+  const user = users[req.session.user_id];
   const shortURL = req.params.id;
 
   if (user) {
@@ -295,7 +301,7 @@ app.get("/urls/:id", (req, res) => {
 
 // Modify the "/urls" route
 app.get("/urls", (req, res) => {
-  const user = users[req.cookies.user_id]; // Retrieve the user from cookies
+  const user = users[req.session.user_id]; // Retrieve the user from cookies
   const userURLs = {};
 
   for (const shortURL in urlDatabase) {
