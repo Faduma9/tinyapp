@@ -183,6 +183,8 @@ app.post("/register", (req, res) => {
     }
   }
 
+  
+
   users[userId] = { id: userId, email, password: bcrypt.hashSync(password, 10) };
   res.cookie("user_id", userId);
   res.redirect("/urls");
@@ -308,7 +310,6 @@ app.get("/urls", (req, res) => {
   };
   res.render("urls_index", templateVars); // Render the "urls_index" template
 });
-
 
 
 
