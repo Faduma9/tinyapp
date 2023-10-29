@@ -13,9 +13,12 @@ This URL shortening tool simplifies and manages long web addresses, providing us
 
 
 ## Final Product
+![Registration Page](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/register.png)
+![Login page](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/login%2520pg.png)
+![Create URL page](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/create-url.png)
+![URL Page](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/URLS-page.png)
+![Specific short URL page where user owns the short URL](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/short%2520urlpg.png)
 
-!["screenshot description"](#) 
-!["screenshot description"](#)
 
 
 
