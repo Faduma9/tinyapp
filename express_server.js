@@ -113,16 +113,16 @@ app.post("/logout", (req, res) => {
 });
 
 // Define the "/urls.json" route for returning the URL database in JSON format
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase); // Respond with the URL database in JSON format
-});
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase); // Respond with the URL database in JSON format
+// });
 
 // Define the "/urls/:id" route for showing details of a specific URL
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id], // Retrieve the user from cookies
     id: req.params.id, // Retrieve the URL's ID
-    longURL: urlDatabase[req.params.id], // Retrieve the URL from the database
+    longURL: urlDatabase[req.params.id].longURL, // Retrieve the URL from the database
   };
   res.render("urls_show", templateVars); // Render the "urls_show" template
 });
@@ -130,9 +130,10 @@ app.get("/urls/:id", (req, res) => {
 // Define the "/u/:id" route for redirecting to the long URL
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL); // Redirect to the long URL
 });
+
 
 //delete route
 app.post("/urls/:id/delete", (req, res) => {
@@ -148,14 +149,15 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 
-
-// Define the POST route for editing a URL
 app.post("/urls/:id/edit", (req, res) => {
   const shortURL = req.params.id;
   const updatedLongURL = req.body.longURL;
-  urlDatabase[shortURL] = updatedLongURL; // Update the URL in the database
+  urlDatabase[shortURL].longURL = updatedLongURL; // Update the URL in the database
   res.redirect("/urls"); // Redirect to the "/urls" page
 });
+
+
+
 
 // Define the POST route for handling user login
 app.post('/login', (req, res) => {
