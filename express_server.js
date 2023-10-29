@@ -162,17 +162,21 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   // Look up the user by email in the users object
-  const user = getUserByEmail(email, database);
+  const user = getUserByEmail(email, users);
 
   if (!user) {
-    return res.status(403).send("Email or user not found.");
+    return res.status(403).send("User with this email does not exist.");
   }
-  if (bcrypt.compareSync(password, user.password)) {
-    res.cookie("user_id", user.id);
-    return res.redirect("/urls");
+
+  if (!bcrypt.compareSync(password, user.password)) {
+    return res.status(403).send("Incorrect password.");
   }
-  res.status(403).send("Email or password is incorrect.");
+
+  // Successful login, set the user's session and redirect
+  req.session.user_id = user.id;
+  res.redirect("/urls");
 });
+
 
 // Define a test route for displaying a greeting
 app.get("/hello", (req, res) => {
