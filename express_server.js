@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
+const { getUserByEmail } = require('./helpers');
+
 
 app.use(cookieSession({
   name: 'session',
@@ -160,7 +162,7 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   // Look up the user by email in the users object
-  const user = findUserByEmail(email);
+  const user = getUserByEmail(email, database);
 
   if (!user) {
     return res.status(403).send("Email or user not found.");
