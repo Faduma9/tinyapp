@@ -13,13 +13,20 @@ This URL shortening tool simplifies and manages long web addresses, providing us
 
 
 ## Final Product
-![Registration Page](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/register.png)
-![Login page](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/login%2520pg.png)
-![Create URL page](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/create-url.png)
-![URL Page](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/URLS-page.png)
-![Specific short URL page where user owns the short URL](vscode-local:/c%253A/Users/ibraz/OneDrive/Pictures/short%2520urlpg.png)
+*Registration Page*
+![image](https://github.com/Faduma9/tinyapp/assets/97137981/b1b1f5a8-2f67-4933-adbc-e9e62c328001)
 
+*Login Page*
+![image](https://github.com/Faduma9/tinyapp/assets/97137981/0567958e-3505-4d14-b10b-d9f3464a0c00)
 
+*Create URL Page*
+![image](https://github.com/Faduma9/tinyapp/assets/97137981/1df2c2ac-bbad-4b54-afc2-432e703a96a8)
+
+*URL Page*
+![image](https://github.com/Faduma9/tinyapp/assets/97137981/65ab71e0-afa8-46ed-8be5-5248222f7ffb)
+
+*Specific short URL page where user owns the short URL*
+![image](https://github.com/Faduma9/tinyapp/assets/97137981/48576e87-1e62-47d8-a327-4ce198e879d9)
 
 
 

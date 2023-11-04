@@ -14,7 +14,7 @@ app.use(cookieSession({
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
 
-// Define the port number
+// port number
 const PORT = 8080;
 
 const urlDatabase = {
@@ -27,6 +27,7 @@ const urlDatabase = {
     userID: "aJ48lW",
   },
 };
+
 
 // Define your `users` object to store registered users
 const users = {};
@@ -47,7 +48,6 @@ function findUserByEmail(email) {
     const user = users[userId];
     if (user.email === email) {
       return user;
-
     }
   }
   return null;
@@ -57,19 +57,12 @@ function findUserByEmail(email) {
 // Parse URL-encoded request bodies with extended mode
 app.use(express.urlencoded({ extended: true }));
 
-// Define the root route
+//Redirection for Root Path ("/"):
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("/urls");
 });
 
-// Define the "/urls" route for displaying a list of URLs
-app.get("/urls", (req, res) => {
-  const templateVars = {
-    user: users[req.session.user_id], // Retrieve the user from cookies
-    urls: urlDatabase, // Pass the URL database
-  };
-  res.render("urls_index", templateVars); // Render the "urls_index" template
-});
+
 
 // Define the "/urls/new" route for creating a new URL
 app.get("/urls/new", (req, res) => {
@@ -106,19 +99,23 @@ app.post("/urls", (req, res) => {
 });
 
 
-// Define the "/logout" route for logging out and clearing the "user_id" cookie
+// Logout route - Clear cookies and redirect to login
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id"); // Clear the "user_id" cookie
-  res.redirect("/login"); // Redirect to the "/login" page
+  req.session = null; // Clear the session
+  res.redirect("/login");
 });
 
-// Define the "/urls.json" route for returning the URL database in JSON format
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase); // Respond with the URL database in JSON format
-// });
+
 
 // Define the "/urls/:id" route for showing details of a specific URL
 app.get("/urls/:id", (req, res) => {
+  const user = users[req.session.user_id]; // Retrieve the user from cookies
+  if (!user) {
+    return res.redirect("/login");
+  }
+  if (!urlDatabase[req.params.id]) {
+    return res.send("URL not found");
+  }
   const templateVars = {
     user: users[req.session.user_id], // Retrieve the user from cookies
     id: req.params.id, // Retrieve the URL's ID
@@ -129,6 +126,13 @@ app.get("/urls/:id", (req, res) => {
 
 // Define the "/u/:id" route for redirecting to the long URL
 app.get("/u/:id", (req, res) => {
+  const user = users[req.session.user_id]; // Retrieve the user from cookies
+  if (!user) {
+    return res.redirect("/login");
+  }
+  if (!urlDatabase[req.params.id]) {
+    return res.send("URL not found");
+  }
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL); // Redirect to the long URL
@@ -147,6 +151,7 @@ app.post("/urls/:id/delete", (req, res) => {
     res.status(404).send("URL not found.");
   }
 });
+
 
 
 app.post("/urls/:id/edit", (req, res) => {
@@ -196,11 +201,8 @@ app.post("/register", (req, res) => {
       return;
     }
   }
-
-  
-
   users[userId] = { id: userId, email, password: bcrypt.hashSync(password, 10) };
-  res.cookie("user_id", userId);
+  req.session.user_id = userId;
   res.redirect("/urls");
 });
 
@@ -220,7 +222,7 @@ app.get('/register', (req, res) => {
   res.render('registration', templateVars);
 });
 
-// Create a GET Route for /login
+// Login route - Redirect to "/urls" if already logged in
 app.get("/login", (req, res) => {
   // Check if the user is already logged in
   if (req.session.user_id && users[req.session.user_id]) {
@@ -260,17 +262,6 @@ app.get("/u/:id", (req, res) => {
 });
 
 
-function urlsForUser(id) {
-  const userURLs = {};
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userURLs[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return userURLs;
-}
-
-
 app.get("/urls", (req, res) => {
   const user = users[req.session.user_id];
   if (user) {
@@ -283,7 +274,20 @@ app.get("/urls", (req, res) => {
   } else {
     res.status(403).send("You must be logged in to view your URLs.");
   }
+
 });
+
+// Define the urlsForUser function to return URLs for a specific user ID
+function urlsForUser(id) {
+  const userURLs = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userURLs[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userURLs;
+}
+
 
 app.get("/urls/:id", (req, res) => {
   const user = users[req.session.user_id];
@@ -304,28 +308,6 @@ app.get("/urls/:id", (req, res) => {
     res.status(403).send("You must be logged in to view this URL.");
   }
 });
-
-
-
-// Modify the "/urls" route
-app.get("/urls", (req, res) => {
-  const user = users[req.session.user_id]; // Retrieve the user from cookies
-  const userURLs = {};
-
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === user.id) {
-      userURLs[shortURL] = urlDatabase[shortURL];
-    }
-  }
-
-  const templateVars = {
-    user,
-    urls: userURLs, // Pass the user's URLs
-  };
-  res.render("urls_index", templateVars); // Render the "urls_index" template
-});
-
-
 
 
 // Start the server and listen on the specified port
