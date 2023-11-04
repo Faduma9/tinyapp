@@ -22,13 +22,12 @@ This URL shortening tool simplifies and manages long web addresses, providing us
 *Create URL Page*
 ![image](https://github.com/Faduma9/tinyapp/assets/97137981/1df2c2ac-bbad-4b54-afc2-432e703a96a8)
 
+
 *URL Page*
 ![image](https://github.com/Faduma9/tinyapp/assets/97137981/65ab71e0-afa8-46ed-8be5-5248222f7ffb)
 
 *Specific short URL page where user owns the short URL*
 ![image](https://github.com/Faduma9/tinyapp/assets/97137981/48576e87-1e62-47d8-a327-4ce198e879d9)
-
-
 
 
 ## Dependencies
